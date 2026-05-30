@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>Hospital Implant Tracker</h1>
+            <p>Login to your account</p>
+        </div>
+        <div class="auth-body">
+            <form method="POST" action="{{ url_for('auth.login') }}">
+                {{ form.csrf_token }}
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    {{ form.email(class="form-control", placeholder="Enter your email") }}
+                    {% if form.email.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.email.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    {{ form.password(class="form-control", placeholder="Enter your password") }}
+                    {% if form.password.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.password.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="mb-3 form-check">
+                    {{ form.remember(class="form-check-input") }}
+                    <label class="form-check-label" for="remember">Remember me</label>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+        </div>
+        <div class="auth-footer">
+            <div class="demo-credentials">
+                <h6>Demo Credentials</h6>
+                <div class="cred-item">
+                    <span class="cred-label">Email:</span>
+                    <span class="cred-value">admin@ex.com</span>
+                </div>
+                <div class="cred-item">
+                    <span class="cred-label">Password:</span>
+                    <span class="cred-value">admin123</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

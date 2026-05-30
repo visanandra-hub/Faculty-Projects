@@ -1,0 +1,141 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="view-implant">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="chart-card">
+                <div class="chart-card-header d-flex justify-content-between align-items-center">
+                    <h5>Implant Details</h5>
+                    <div>
+                        <a href="{{ url_for('implant.edit_implant', implant_id=implant.id) }}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        {% if current_user.is_admin() %}
+                        <button class="btn btn-danger delete-implant-btn" 
+                                data-id="{{ implant.id }}" 
+                                data-implant-id="{{ implant.implant_id }}">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                        {% endif %}
+                        <a href="{{ url_for('implant.list_implants') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to List
+                        </a>
+                    </div>
+                </div>
+                <div class="chart-card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <div class="info-label">Implant ID</div>
+                                <div class="info-value">{{ implant.implant_id }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Implant Type</div>
+                                <div class="info-value">{{ implant.implant_type.name }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Patient Name</div>
+                                <div class="info-value">{{ implant.patient_name }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Doctor</div>
+                                <div class="info-value">{{ implant.doctor.username }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <div class="info-label">Implant Date</div>
+                                <div class="info-value">{{ implant.implant_date.strftime('%Y-%m-%d') }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Status</div>
+                                <div class="info-value">
+                                    <span class="badge rounded-pill bg-{{ 'success' if implant.status == 'Active' else ('warning' if implant.status == 'Replaced' else 'danger') }}">
+                                        {{ implant.status }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Created</div>
+                                <div class="info-value">{{ implant.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Last Updated</div>
+                                <div class="info-value">{{ implant.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="info-item">
+                                <div class="info-label">Notes</div>
+                                <div class="info-value notes-box">
+                                    {% if implant.notes %}
+                                    {{ implant.notes|nl2br }}
+                                    {% else %}
+                                    <em>No notes available</em>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Implant Modal -->
+{% if current_user.is_admin() %}
+<div class="modal fade" id="deleteImplantModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Implant</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete implant <span id="deleteImplantId"></span>?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteImplantForm" method="POST">
+                    {{ form.csrf_token if form else csrf_token() }}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if current_user.is_admin() %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Delete Implant Modal
+    const deleteButtons = document.querySelectorAll('.delete-implant-btn');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const implantId = this.getAttribute('data-id');
+            const implantRef = this.getAttribute('data-implant-id');
+            
+            // Set modal content
+            document.getElementById('deleteImplantId').textContent = implantRef;
+            
+            // Set form action
+            document.getElementById('deleteImplantForm').action = `/implants/${implantId}/delete`;
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('deleteImplantModal'));
+            modal.show();
+        });
+    });
+});
+</script>
+{% endif %}
+{% endblock %}

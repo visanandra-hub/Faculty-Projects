@@ -1,0 +1,101 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="chart-card">
+            <div class="chart-card-header">
+                <h5>Add New Implant Record</h5>
+            </div>
+            <div class="chart-card-body">
+                <form method="POST" action="{{ url_for('implant.add_implant') }}">
+                    {{ form.csrf_token }}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="type_id" class="form-label">Implant Type</label>
+                                {{ form.type_id(class="form-select") }}
+                                {% if form.type_id.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.type_id.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="patient_name" class="form-label">Patient Name</label>
+                                {{ form.patient_name(class="form-control") }}
+                                {% if form.patient_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.patient_name.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="doctor_id" class="form-label">Doctor</label>
+                                {{ form.doctor_id(class="form-select") }}
+                                {% if form.doctor_id.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.doctor_id.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="implant_date" class="form-label">Implant Date</label>
+                                {{ form.implant_date(class="form-control", type="date") }}
+                                {% if form.implant_date.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.implant_date.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                {{ form.status(class="form-select") }}
+                                {% if form.status.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.status.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="notes" class="form-label">Notes</label>
+                                {{ form.notes(class="form-control", rows=3) }}
+                                {% if form.notes.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.notes.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-end">
+                        <a href="{{ url_for('implant.list_implants') }}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Save Implant Record</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

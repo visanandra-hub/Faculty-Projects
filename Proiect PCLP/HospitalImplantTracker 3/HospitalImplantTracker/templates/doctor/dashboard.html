@@ -1,0 +1,194 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="dashboard">
+    <!-- Stats Cards - more compact with smaller gutters -->
+    <div class="row g-2 stats-row">
+        <div class="col-sm-6 col-md-4">
+            <div class="stat-card primary">
+                <div class="stat-card-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div class="stat-card-info">
+                    <h5>Total Implants</h5>
+                    <h3>{{ stats.total_implants }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <div class="stat-card success">
+                <div class="stat-card-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="stat-card-info">
+                    <h5>Implants This Month</h5>
+                    <h3>{{ stats.implants_this_month }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <div class="stat-card info">
+                <div class="stat-card-icon">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <div class="stat-card-info">
+                    <h5>Active Implants</h5>
+                    <h3>{{ stats.active_implants }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Grid Layout - more compact charts -->
+    <div class="dashboard-grid">
+        <!-- Left Column -->
+        <div class="dashboard-column">
+            <!-- Recent Implants table -->
+            <div class="chart-card">
+                <div class="chart-card-header d-flex justify-content-between align-items-center">
+                    <h5>My Patient Implants</h5>
+                    <a href="{{ url_for('implant.add_implant') }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-plus"></i> Add Implant
+                    </a>
+                </div>
+                <div class="chart-card-body p-0">
+                    {% if recent_implants %}
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Patient</th>
+                                    <th>Type</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for implant in recent_implants %}
+                                <tr>
+                                    <td class="small">{{ implant.implant_id }}</td>
+                                    <td>{{ implant.patient_name }}</td>
+                                    <td>{{ implant.implant_type.name }}</td>
+                                    <td class="small">{{ implant.implant_date.strftime('%Y-%m-%d') }}</td>
+                                    <td>
+                                        <span class="badge rounded-pill bg-{{ 'success' if implant.status == 'Active' else ('warning' if implant.status == 'Replaced' else 'danger') }}">
+                                            {{ implant.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('implant.view_implant', implant_id=implant.id) }}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ url_for('implant.edit_implant', implant_id=implant.id) }}" class="btn btn-sm btn-warning">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="no-data">
+                        <p>No implant records available yet</p>
+                        <a href="{{ url_for('implant.add_implant') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add Your First Implant
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Column -->
+        <div class="dashboard-sidebar">
+            <!-- Pie Charts in a more compact layout -->
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <h5>Implants by Type</h5>
+                </div>
+                <div class="chart-card-body chart-compact">
+                    <canvas id="typeChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <h5>Implants by Status</h5>
+                </div>
+                <div class="chart-card-body chart-compact">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Colors for charts
+    const colorPalette = [
+        'rgba(52, 152, 219, 0.8)',
+        'rgba(155, 89, 182, 0.8)',
+        'rgba(52, 73, 94, 0.8)',
+        'rgba(26, 188, 156, 0.8)',
+        'rgba(241, 196, 15, 0.8)',
+        'rgba(230, 126, 34, 0.8)',
+        'rgba(231, 76, 60, 0.8)',
+        'rgba(149, 165, 166, 0.8)'
+    ];
+    
+    // Implants by Type Chart
+    const typeCtx = document.getElementById('typeChart').getContext('2d');
+    const typeChart = new Chart(typeCtx, {
+        type: 'pie',
+        data: {
+            labels: {{ type_labels|tojson }},
+            datasets: [{
+                data: {{ type_counts|tojson }},
+                backgroundColor: colorPalette,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                }
+            }
+        }
+    });
+    
+    // Implants by Status Chart
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    const statusChart = new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ status_labels|tojson }},
+            datasets: [{
+                data: {{ status_counts|tojson }},
+                backgroundColor: [
+                    'rgba(26, 188, 156, 0.8)',  // Active - Green
+                    'rgba(231, 76, 60, 0.8)',   // Removed - Red
+                    'rgba(241, 196, 15, 0.8)'   // Replaced - Yellow
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,26 @@
+UndefinedError
+jinja2.exceptions.UndefinedError: 'csrf_token' is undefined
+Traceback (most recent call last)
+File "C: \Users\GabiAppData LocalPackages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0|LocalCacheVocal-packages\Python312\site-packages/flasklapp.py*, line 1536, in __call_
+return self.wsgi_app(environ, start_response)
+٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨
+File "C: Users\Gabi AppData\LocalPackages/PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p01LocalCachelocal-packages/Python3121site-packages/werkzeug/middleware|proxy_fix.py*. line 183. in _call_
+return self.app(environ, start response)
+ААЛАДАДАЛАДААААДАДАДЛАДАДААДАДАЛА
+File "C:\Users\Gabi\AppData\LocalPackages\PythonSoftwareFoundation.Python.3.12 qbz5n2kfra8p01LocalCache\ocal-packages\Python312\site-packages\flasklapp.py". line 1514, in wsgi_app
+response - self. handle exception(e)
+AAAAAAAAAAAAAAAAAAAARAN
+File "C: \Users\GabilAppData\LocalPackages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p01LocalCache\local-packages\Python312\site-packages|flasklapp.py*, line 1511, in wsgi_app
+response = self.full_dispatch_request()
+File "C: IUsers\GabiVAppData\LocaNPackages|PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCacheVocal-packages\Python3121site-packages'flasklapp.py*. line 919, in full_dispatch_request
+-v = self.handle_user_exception(e)
+AAAAAAAAAAAAAAA
+File "C: \Users\Gabi\AppData\LocaNPackages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCacheVocal-packages\Python312\site-packages\flasklapp.py*, line 917, in full_dispatch_request
+-v - self.dispatch_request(]
+١٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨٨
+File "C: Users\GabilAppData\Local\Packages/PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCacheVocal-packages\Python312\site-packages\flasklapp.py*, line 902, in dispatch request
+eturn self.ensure_ sync(self.view_functions[rule.endpoint])(**view_args) # type: ignore[no-any-return
+File "C: Users\GabilAppData\LocalPackages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCacheVocal-packages\Python312\site-packages\flask_loginlutils.py*, line 290, in decorated_view
+eturn current app.ensure sync (func) (*args
+**kwargs)
+File "C. Users\Gabi\Downloads HospitalImplantTrackerlimplant_routes.py", line 48, in list_implants

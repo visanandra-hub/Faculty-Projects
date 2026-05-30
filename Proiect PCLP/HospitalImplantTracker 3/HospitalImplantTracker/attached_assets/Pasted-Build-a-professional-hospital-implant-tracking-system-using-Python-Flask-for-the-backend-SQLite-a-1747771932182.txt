@@ -1,0 +1,58 @@
+Build a professional hospital implant tracking system using Python (Flask) for the backend, SQLite as the database, and HTML/CSS for the frontend. The frontend should have a modern UI inspired by Duolingo and Notion — clean, responsive, and professional.
+
+🔐 User Roles:
+	•	Admin:
+	•	Full system access.
+	•	Can add/remove users (doctors).
+	•	Can view, add, update, and delete implant records.
+	•	Can view statistics and data analytics.
+	•	Doctor:
+	•	Can view, add, and update implant records (only the ones they manage).
+
+Predefined admin account:
+Email: admin@ex.com
+Password: admin123
+
+📦 Implant Record Fields:
+	•	Implant ID
+	•	Implant Type (e.g. hip, pacemaker, dental)
+	•	Patient Name
+	•	Doctor Assigned
+	•	Date of Implant
+	•	Status (e.g. Active, Removed, Replaced)
+	•	Notes
+
+📊 Dashboard Features:
+	•	Responsive dashboard that shows:
+	•	Total number of implants
+	•	Implants by type (pie chart or bar chart)
+	•	Implants by status (active, removed, etc.)
+	•	Implants added this month
+	•	Top doctors by number of implants managed
+
+📁 Pages:
+	•	Login Page
+	•	Admin Dashboard (statistics, charts, activity feed)
+	•	Doctor Dashboard (limited view of personal cases)
+	•	Implant Management Page (search, filter, add/edit/delete records)
+	•	User Management Page (Admin only: add/remove/edit users)
+
+📋 Tables and Filtering:
+	•	Implant list should be displayed in a sortable, searchable data table.
+	•	Filters by type, doctor, date, status.
+	•	Use basic JavaScript or lightweight libraries (e.g., DataTables or Chart.js) for interactivity.
+
+🎨 Design Style:
+	•	Inspired by Duolingo (vibrant colors, modern UI) and Notion (clean, readable, structured layout).
+	•	Rounded cards, responsive layout, modern fonts.
+	•	Consistent color scheme for admin vs doctor views.
+
+📂 Structure:
+	•	Use Flask blueprints or app factory pattern for clean code structure.
+	•	Separate modules for:
+	•	User auth
+	•	Implant CRUD operations
+	•	Statistics and reporting
+	•	Admin panel
+
+Make sure the code is modular, well-commented, and ready for future expansion (e.g. switching to PostgreSQL or adding email notifications).

@@ -1,0 +1,185 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="implants-list">
+    <!-- Filter Section -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <h5>Filters</h5>
+                </div>
+                <div class="chart-card-body">
+                    <form id="filterForm" method="GET" action="{{ url_for('implant.list_implants') }}" class="row g-3">
+                        <div class="col-md-3">
+                            <label for="type" class="form-label">Implant Type</label>
+                            <select class="form-select" name="type" id="type">
+                                <option value="">All Types</option>
+                                {% for type in implant_types %}
+                                <option value="{{ type.id }}" {% if request.args.get('type') == type.id|string %}selected{% endif %}>
+                                    {{ type.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" name="status" id="status">
+                                <option value="">All Statuses</option>
+                                {% for status in statuses %}
+                                <option value="{{ status }}" {% if request.args.get('status') == status %}selected{% endif %}>
+                                    {{ status }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% if current_user.is_admin() %}
+                        <div class="col-md-3">
+                            <label for="doctor" class="form-label">Doctor</label>
+                            <select class="form-select" name="doctor" id="doctor">
+                                <option value="">All Doctors</option>
+                                {% for doctor in doctors %}
+                                <option value="{{ doctor.id }}" {% if request.args.get('doctor') == doctor.id|string %}selected{% endif %}>
+                                    {{ doctor.username }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% endif %}
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary me-2">Apply Filters</button>
+                            <a href="{{ url_for('implant.list_implants') }}" class="btn btn-secondary">Clear</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Implants Table -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="chart-card">
+                <div class="chart-card-header d-flex justify-content-between align-items-center">
+                    <h5>Implant Records</h5>
+                    <a href="{{ url_for('implant.add_implant') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add Implant
+                    </a>
+                </div>
+                <div class="chart-card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="implantsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Patient Name</th>
+                                    <th>Implant Type</th>
+                                    {% if current_user.is_admin() %}
+                                    <th>Doctor</th>
+                                    {% endif %}
+                                    <th>Implant Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for implant in implants %}
+                                <tr>
+                                    <td>{{ implant.implant_id }}</td>
+                                    <td>{{ implant.patient_name }}</td>
+                                    <td>{{ implant.implant_type.name }}</td>
+                                    {% if current_user.is_admin() %}
+                                    <td>{{ implant.doctor.username }}</td>
+                                    {% endif %}
+                                    <td>{{ implant.implant_date.strftime('%Y-%m-%d') }}</td>
+                                    <td>
+                                        <span class="badge rounded-pill bg-{{ 'success' if implant.status == 'Active' else ('warning' if implant.status == 'Replaced' else 'danger') }}">
+                                            {{ implant.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('implant.view_implant', implant_id=implant.id) }}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ url_for('implant.edit_implant', implant_id=implant.id) }}" class="btn btn-sm btn-warning">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        {% if current_user.is_admin() %}
+                                        <button class="btn btn-sm btn-danger delete-implant-btn" 
+                                                data-id="{{ implant.id }}" 
+                                                data-implant-id="{{ implant.implant_id }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Implant Modal -->
+{% if current_user.is_admin() %}
+<div class="modal fade" id="deleteImplantModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Implant</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete implant <span id="deleteImplantId"></span>?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteImplantForm" method="POST">
+                    {{ form.csrf_token if form else csrf_token() }}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize DataTable
+    $('#implantsTable').DataTable({
+        order: [[0, 'desc']],
+        paging: true,
+        searching: true,
+        responsive: true
+    });
+    
+    // Delete Implant Modal (for admin)
+    {% if current_user.is_admin() %}
+    const deleteButtons = document.querySelectorAll('.delete-implant-btn');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const implantId = this.getAttribute('data-id');
+            const implantRef = this.getAttribute('data-implant-id');
+            
+            // Set modal content
+            document.getElementById('deleteImplantId').textContent = implantRef;
+            
+            // Set form action
+            document.getElementById('deleteImplantForm').action = `/implants/${implantId}/delete`;
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('deleteImplantModal'));
+            modal.show();
+        });
+    });
+    {% endif %}
+});
+</script>
+{% endblock %}
